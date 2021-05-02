@@ -222,15 +222,21 @@
 						})
 						console.log(this.title)
 						this.title=""
+						this.saveData()
 					},
 					checkEvent: function(id){
 						this.things[id].isDone = !this.things[id].isDone
+						this.saveData()
 					},
 					deleteEvent:function(id){
 						this.things.splice(id,1)
 						this.things.forEach((item,index)=>{
 							item.id = index
 						})
+						this.saveData()
+					},
+					saveData: function(){
+						localStorage.things = JSON.stringify(this.things)
 					}
 				},
 				computed: {
@@ -244,6 +250,9 @@
 							return item.isDone==true
 						})
 					}
+				},
+				mounted: function(){
+					this.things = JSON.parse(localStorage.things)
 				}
 			})
 		</script>

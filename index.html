@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+				
+			*{
+				padding: 0;
+				margin: 0;
+			}
+			body{
+				padding: 0;
+				margin: 0;
+				background-color: #CDCDCD;
+			}
+			.header{
+				height: 80px;
+				background-color: rgba(47,47,47,0.98);
+			}
+			section{
+				width: 50%;
+				margin: 0 auto;
+			}
+			.title{
+				float: left;
+				line-height: 80px;
+				color: #dddddd;
+				font-size: 25px;
+				font-weight: 500;
+				width: 100px;
+			}
+			#addToDo{
+				float: right;
+				width: 60%;
+				height: 30px;
+				margin-top: 27px;
+				text-indent: 10px;
+				border: none;
+				border-radius: 8px;
+				box-shadow: 4px 3px 3px grey inset;
+				outline: skyblue;
+			}
+			.main>section>h2{
+				position: relative;
+			}
+			span{
+				position: absolute;
+				display: inline-block;
+				right: 2px;
+				top: 8px;
+				background-color: azure;
+				border-radius: 10px;
+				color: #666;
+				height: 22px;
+				line-height: 22px;
+				padding: 0 5px;
+				background-color: ;#E6E6FA
+			}
+			.footer>section>h2{
+				position: relative;
+			}
+			
+			.main{
+				margin-top: 20px;
+			}
+			ul,ol{
+				list-style: none;
+			}
+			.isDoing li{
+				position: relative;
+				background-color: white;
+				border-radius: 5px;
+				height: 30px;
+				border-left: 5px solid lightgreen;
+				margin-bottom: 10px;
+				margin-top: 10px;
+			}
+			.isDoing li .isDoingCheck{
+				position: absolute;
+				top: 2px;
+				left: 10px;
+				height: 25px;
+				width: 25px;
+				line-height: 30px;
+				cursor: pointer;
+			}
+			.isDoing li .eventToDo{
+				position: absolute;
+				left: 50px;
+				width: 60%;
+				top: 4px;
+				height: 20px;
+				border: 0;
+			}
+			.isDoing li .deleteBtn{
+				position: absolute;
+				right: 10px;
+				top: 5px;
+				height: 20px;
+				width: 30px;
+				border: none;
+				background-color: #666666;
+				border-radius: 7px;
+				color: #dddddd;
+			}
+			.isDone li{
+				position: relative;
+				background-color: #dfdfdf;
+				border-radius: 5px;
+				height: 30px;
+				border-left: 5px solid black;
+				margin-bottom: 10px;
+				margin-top: 10px;
+			}
+			.isDone li .isDoneCheck{
+				position: absolute;
+				top: 2px;
+				left: 10px;
+				height: 25px;
+				width: 25px;
+				line-height: 30px;
+				cursor: pointer;
+			}
+			.isDone li .eventDone{
+				position: absolute;
+				left: 50px;
+				width: 60%;
+				top: 4px;
+				height: 20px;
+				background-color: #dfdfdf;
+				border: 0;
+			}
+			.isDone li .deleteBtn{
+				position: absolute;
+				right: 10px;
+				top: 5px;
+				height: 20px;
+				width: 30px;
+				border: none;
+				background-color: #666666;
+				border-radius: 7px;
+				color: #dddddd;
+			}
+			
+			.footer{
+				margin-top: 40px;
+			}
+			
+			
+			.fade-enter-active,.fade-leave-active{
+				transition: opacity 1s; 
+			}
+			.fade-enter,.fade-leave-to{
+				opacity: 0;
+			}
+			
+			.fs-enter-active,.fs-leave-active{
+				transition: all 1s; 
+			}
+			.fs-enter,.fs-leave-to{
+				opacity: 0;
+				transform: translateX(100px);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="header">
+				<section>
+					<label class="title">myToDoList</label>
+					<input type="text" v-model.lazy="title" @keyup.enter="addThing" id="addToDo" placeholder="添加ToDo"/>
+				</section>				
+			</div>
+			<div class="main">
+				<section>
+					<h2>正在进行	<span class="count">{{doingThings.length}}</span></h2>
+					
+					<ul class="isDoing">
+						<transition-group name="fs" tag="ul" >
+							<li v-if="things.length > 0" v-for="item,index in doingThings"  :key="item.id">
+								<input type="checkbox" name="" @click.prevent="checkEvent(item.id)" class="isDoingCheck" :checked="item.isDone?checked:0"  />
+								<input type="text" name="" v-model="item.title" class="eventToDo"  />
+								<input type="button" name="" @click="deleteEvent(item.id)" class="deleteBtn" value="删除" />
+							</li>
+						</transition-group>
+					</ul>
+					
+				</section>
+			</div>
+			<div class="footer">
+				<section>
+					<h2>已完成	<span class="count">{{doneThings.length}}</span></h2>
+					<ul class="isDone">
+						<transition-group name="fade" tag="ul">
+							<li v-if="things.length > 0" v-for="item,index in doneThings"  :key="item.id">
+								<input type="checkbox" @click.prevent="checkEvent(item.id)" name="" class="isDoneCheck" checked="item.isDone?checked:0" />
+								<input type="text" v-model="item.title" name="" class="eventDone" value="" />
+								<input type="button" name="" @click="deleteEvent(item.id)" class="deleteBtn" value="删除" />
+							</li>
+						</transition-group>
+					</ul>
+					
+				</section>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			let app = new Vue({
+				el: "#app",
+				data: {
+					"title": "",
+					"things": []
+				},
+				methods: {
+					addThing:function(){
+						this.things.push({
+							"id": app.things.length,
+							"title": app.title,
+							"isDone": false
+						})
+						console.log(this.title)
+						this.title=""
+					},
+					checkEvent: function(id){
+						this.things[id].isDone = !this.things[id].isDone
+					},
+					deleteEvent:function(id){
+						this.things.splice(id,1)
+						this.things.forEach((item,index)=>{
+							item.id = index
+						})
+					}
+				},
+				computed: {
+					doingThings: function(){
+						return this.things.filter(function(item){
+							return item.isDone==false
+						})
+					},
+					doneThings: function(){
+						return this.things.filter(function(item){
+							return item.isDone==true
+						})
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
